@@ -1,0 +1,46 @@
+name: Update Visual Snapshots
+
+# Run this manually from the GitHub Actions tab whenever you need to
+# regenerate the Linux baseline screenshots (e.g. after adding new pages
+# or after intentional UI changes).
+on:
+  workflow_dispatch:
+
+env:
+  MARKET_BASE_URL_BE: ${{ secrets.MARKET_BASE_URL_BE }}
+  MARKET_BASE_URL_NL: ${{ secrets.MARKET_BASE_URL_NL }}
+  MARKET_BASE_URL_FR: ${{ secrets.MARKET_BASE_URL_FR }}
+  MARKET_BASE_URL_CH: ${{ secrets.MARKET_BASE_URL_CH }}
+  MARKET_BASE_URL_ES: ${{ secrets.MARKET_BASE_URL_ES }}
+
+jobs:
+  update-snapshots:
+    name: Update Linux Baseline Snapshots
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # Use a PAT so the workflow can push commits back to the branch
+          token: ${{ secrets.SNAPSHOTS_PAT }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps
+
+      - name: Update snapshots
+        run: npx playwright test tests/visual --update-snapshots
+
+      - name: Commit updated snapshots
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add tests/visual/*.spec.ts-snapshots/*-linux.png
+          git diff --staged --quiet || git commit -m "chore: update Linux visual snapshots"
+          git push

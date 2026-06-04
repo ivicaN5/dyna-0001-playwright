@@ -11,6 +11,8 @@
     "dev:run:visual": "npx playwright test tests/visual",
     "dev:open:visual": "npx playwright test tests/visual --ui",
     "dev:update:visual": "npx playwright test tests/visual --update-snapshots",
+    "dev:run:accessibility": "npx playwright test tests/accessibility --project=accessibility",
+    "dev:open:accessibility": "npx playwright test tests/accessibility --project=accessibility --ui",
     "lint": "eslint .",
     "format": "prettier --write .",
     "prepare": "husky"
@@ -48,6 +50,7 @@
     "prettier": "^3.8.3"
   },
   "dependencies": {
+    "@axe-core/playwright": "^4.11.3",
     "dotenv": "^17.4.2"
   }
 }
