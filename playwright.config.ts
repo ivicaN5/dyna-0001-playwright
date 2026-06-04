@@ -15,9 +15,10 @@ const VIEWPORT_CONFIGS = [
   { name: "mobile-android", viewport: VIEWPORTS.mobileAndroid, isMobile: true },
 ];
 
-const projects: Project[] = BROWSERS.flatMap((browser) =>
+const visualProjects: Project[] = BROWSERS.flatMap((browser) =>
   VIEWPORT_CONFIGS.map(({ name, viewport, isMobile }) => ({
     name: `${browser}-${name}`,
+    testMatch: "**/visual/**/*.spec.ts",
     use: {
       browserName: browser,
       viewport,
@@ -25,6 +26,17 @@ const projects: Project[] = BROWSERS.flatMap((browser) =>
     },
   }))
 );
+
+// Accessibility tests run on a single browser + desktop viewport —
+// a11y violations are not viewport- or browser-specific.
+const accessibilityProject: Project = {
+  name: "accessibility",
+  testMatch: "**/accessibility/**/*.spec.ts",
+  use: {
+    browserName: "chromium",
+    viewport: VIEWPORTS.desktopDefault,
+  },
+};
 
 export default defineConfig({
   testDir: "./tests",
@@ -37,5 +49,5 @@ export default defineConfig({
     trace: "on-first-retry",
     screenshot: "only-on-failure",
   },
-  projects,
+  projects: [...visualProjects, accessibilityProject],
 });
