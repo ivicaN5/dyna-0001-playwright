@@ -1,8 +1,30 @@
-import { defineConfig } from "@playwright/test";
+import { defineConfig, Project } from "@playwright/test";
 import { config } from "dotenv";
 import { VIEWPORTS } from "./config/viewports";
 
 config({ path: [".env.local", ".env"] });
+
+type BrowserName = "chromium" | "firefox" | "webkit";
+
+const BROWSERS: BrowserName[] = ["chromium", "firefox", "webkit"];
+
+const VIEWPORT_CONFIGS = [
+  { name: "desktop-default", viewport: VIEWPORTS.desktopDefault, isMobile: false },
+  { name: "desktop-large", viewport: VIEWPORTS.desktopLarge, isMobile: false },
+  { name: "mobile-iphone", viewport: VIEWPORTS.mobileIphone, isMobile: true },
+  { name: "mobile-android", viewport: VIEWPORTS.mobileAndroid, isMobile: true },
+];
+
+const projects: Project[] = BROWSERS.flatMap((browser) =>
+  VIEWPORT_CONFIGS.map(({ name, viewport, isMobile }) => ({
+    name: `${browser}-${name}`,
+    use: {
+      browserName: browser,
+      viewport,
+      ...(isMobile && { hasTouch: true, isMobile: true }),
+    },
+  }))
+);
 
 export default defineConfig({
   testDir: "./tests",
@@ -14,37 +36,6 @@ export default defineConfig({
   use: {
     trace: "on-first-retry",
     screenshot: "only-on-failure",
-    browserName: "chromium",
   },
-
-  projects: [
-    {
-      name: "desktop-default",
-      use: {
-        viewport: VIEWPORTS.desktopDefault,
-      },
-    },
-    {
-      name: "desktop-large",
-      use: {
-        viewport: VIEWPORTS.desktopLarge,
-      },
-    },
-    {
-      name: "mobile-iphone",
-      use: {
-        viewport: VIEWPORTS.mobileIphone,
-        hasTouch: true,
-        isMobile: true,
-      },
-    },
-    {
-      name: "mobile-android",
-      use: {
-        viewport: VIEWPORTS.mobileAndroid,
-        hasTouch: true,
-        isMobile: true,
-      },
-    },
-  ],
+  projects,
 });
