@@ -16,7 +16,7 @@ env:
 jobs:
   update-snapshots:
     name: Update Linux Baseline Snapshots
-    timeout-minutes: 60
+    timeout-minutes: 180
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -34,7 +34,9 @@ jobs:
         run: npx playwright install --with-deps
 
       - name: Update snapshots
-        run: npx playwright test tests/visual --update-snapshots
+        # Override the CI worker limit (1) with 4 parallel workers so the
+        # 1716-test run completes within the 3-hour timeout.
+        run: npx playwright test tests/visual --update-snapshots --workers=4
 
       - name: Commit updated snapshots
         run: |
