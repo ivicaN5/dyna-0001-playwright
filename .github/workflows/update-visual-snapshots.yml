@@ -21,8 +21,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          # Use a PAT so the workflow can push commits back to the branch
-          token: ${{ secrets.SNAPSHOTS_PAT }}
+          token: ${{ github.token }}
 
       - uses: actions/setup-node@v4
         with:
