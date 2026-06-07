@@ -33,10 +33,79 @@ jobs:
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
 
-      - name: Update snapshots
-        # Override the CI worker limit (1) with 4 parallel workers so the
-        # 1716-test run completes within the 3-hour timeout.
-        run: npx playwright test tests/visual --update-snapshots --workers=4
+      # 1716 total snapshots split into 35 sequential shards of ~49 each.
+      # Running shards one at a time (--workers=1) keeps memory usage low
+      # and avoids browser crashes from too many parallel instances.
+      - name: Update snapshots - shard 1/35
+        run: npx playwright test tests/visual --update-snapshots --workers=1 --shard=1/35
+      - name: Update snapshots - shard 2/35
+        run: npx playwright test tests/visual --update-snapshots --workers=1 --shard=2/35
+      - name: Update snapshots - shard 3/35
+        run: npx playwright test tests/visual --update-snapshots --workers=1 --shard=3/35
+      - name: Update snapshots - shard 4/35
+        run: npx playwright test tests/visual --update-snapshots --workers=1 --shard=4/35
+      - name: Update snapshots - shard 5/35
+        run: npx playwright test tests/visual --update-snapshots --workers=1 --shard=5/35
+      - name: Update snapshots - shard 6/35
+        run: npx playwright test tests/visual --update-snapshots --workers=1 --shard=6/35
+      - name: Update snapshots - shard 7/35
+        run: npx playwright test tests/visual --update-snapshots --workers=1 --shard=7/35
+      - name: Update snapshots - shard 8/35
+        run: npx playwright test tests/visual --update-snapshots --workers=1 --shard=8/35
+      - name: Update snapshots - shard 9/35
+        run: npx playwright test tests/visual --update-snapshots --workers=1 --shard=9/35
+      - name: Update snapshots - shard 10/35
+        run: npx playwright test tests/visual --update-snapshots --workers=1 --shard=10/35
+      - name: Update snapshots - shard 11/35
+        run: npx playwright test tests/visual --update-snapshots --workers=1 --shard=11/35
+      - name: Update snapshots - shard 12/35
+        run: npx playwright test tests/visual --update-snapshots --workers=1 --shard=12/35
+      - name: Update snapshots - shard 13/35
+        run: npx playwright test tests/visual --update-snapshots --workers=1 --shard=13/35
+      - name: Update snapshots - shard 14/35
+        run: npx playwright test tests/visual --update-snapshots --workers=1 --shard=14/35
+      - name: Update snapshots - shard 15/35
+        run: npx playwright test tests/visual --update-snapshots --workers=1 --shard=15/35
+      - name: Update snapshots - shard 16/35
+        run: npx playwright test tests/visual --update-snapshots --workers=1 --shard=16/35
+      - name: Update snapshots - shard 17/35
+        run: npx playwright test tests/visual --update-snapshots --workers=1 --shard=17/35
+      - name: Update snapshots - shard 18/35
+        run: npx playwright test tests/visual --update-snapshots --workers=1 --shard=18/35
+      - name: Update snapshots - shard 19/35
+        run: npx playwright test tests/visual --update-snapshots --workers=1 --shard=19/35
+      - name: Update snapshots - shard 20/35
+        run: npx playwright test tests/visual --update-snapshots --workers=1 --shard=20/35
+      - name: Update snapshots - shard 21/35
+        run: npx playwright test tests/visual --update-snapshots --workers=1 --shard=21/35
+      - name: Update snapshots - shard 22/35
+        run: npx playwright test tests/visual --update-snapshots --workers=1 --shard=22/35
+      - name: Update snapshots - shard 23/35
+        run: npx playwright test tests/visual --update-snapshots --workers=1 --shard=23/35
+      - name: Update snapshots - shard 24/35
+        run: npx playwright test tests/visual --update-snapshots --workers=1 --shard=24/35
+      - name: Update snapshots - shard 25/35
+        run: npx playwright test tests/visual --update-snapshots --workers=1 --shard=25/35
+      - name: Update snapshots - shard 26/35
+        run: npx playwright test tests/visual --update-snapshots --workers=1 --shard=26/35
+      - name: Update snapshots - shard 27/35
+        run: npx playwright test tests/visual --update-snapshots --workers=1 --shard=27/35
+      - name: Update snapshots - shard 28/35
+        run: npx playwright test tests/visual --update-snapshots --workers=1 --shard=28/35
+      - name: Update snapshots - shard 29/35
+        run: npx playwright test tests/visual --update-snapshots --workers=1 --shard=29/35
+      - name: Update snapshots - shard 30/35
+        run: npx playwright test tests/visual --update-snapshots --workers=1 --shard=30/35
+      - name: Update snapshots - shard 31/35
+        run: npx playwright test tests/visual --update-snapshots --workers=1 --shard=31/35
+      - name: Update snapshots - shard 32/35
+        run: npx playwright test tests/visual --update-snapshots --workers=1 --shard=32/35
+      - name: Update snapshots - shard 33/35
+        run: npx playwright test tests/visual --update-snapshots --workers=1 --shard=33/35
+      - name: Update snapshots - shard 34/35
+        run: npx playwright test tests/visual --update-snapshots --workers=1 --shard=34/35
+      - name: Update snapshots - shard 35/35
+        run: npx playwright test tests/visual --update-snapshots --workers=1 --shard=35/35
 
       - name: Commit updated snapshots
         run: |
