@@ -22,7 +22,8 @@ const visualProjects: Project[] = BROWSERS.flatMap((browser) =>
     use: {
       browserName: browser,
       viewport,
-      ...(isMobile && { hasTouch: true, isMobile: true }),
+      // Firefox does not support isMobile or hasTouch — use viewport size only
+      ...(isMobile && browser !== "firefox" && { hasTouch: true, isMobile: true }),
     },
   }))
 );
