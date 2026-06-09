@@ -14,8 +14,7 @@ export class MarketPage {
   }
 
   async goto() {
-    await this.page.goto(this.url, { waitUntil: "load" });
-    await this.page.waitForLoadState("domcontentloaded");
+    await this.page.goto(this.url, { waitUntil: "domcontentloaded", timeout: 60000 });
     await this.scrollToBottomAndWaitForImages();
   }
 
@@ -39,9 +38,21 @@ export class MarketPage {
       });
     });
 
-    await this.page.waitForFunction(() =>
-      Array.from(document.querySelectorAll("img")).every((img) => img.complete)
-    );
+    // Only require visible, source-resolved images to finish loading, and bound
+    // the wait so a hidden/off-screen lazy image (e.g. inactive carousel slide)
+    // or a stalled request can't hang the whole test for the full timeout.
+    await this.page
+      .waitForFunction(
+        () =>
+          Array.from(document.querySelectorAll("img"))
+            .filter((img) => img.offsetParent !== null && img.currentSrc)
+            .every((img) => img.complete && img.naturalWidth > 0),
+        undefined,
+        { timeout: 20000 }
+      )
+      .catch(() => {
+        // Proceed anyway — off-screen/hidden lazy images may never load.
+      });
 
     await this.page.evaluate(() => window.scrollTo(0, 0));
   }

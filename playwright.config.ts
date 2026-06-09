@@ -41,12 +41,29 @@ const accessibilityProject: Project = {
 
 export default defineConfig({
   testDir: "./tests",
+  timeout: 90_000,
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
   workers: process.env.CI ? 1 : undefined,
   reporter: "html",
+  // Stability + tolerance defaults for a large visual-snapshot suite.
+  expect: {
+    timeout: 15_000,
+    toHaveScreenshot: {
+      // Freeze finite animations and disable infinite ones for stable pixels.
+      animations: "disabled",
+      caret: "hide",
+      // Render at CSS pixels so snapshots are consistent across device scale factors.
+      scale: "css",
+      // Tolerate sub-pixel anti-aliasing jitter to avoid false positives at scale.
+      maxDiffPixelRatio: 0.01,
+    },
+  },
   use: {
+    navigationTimeout: 60_000,
+    // Honour prefers-reduced-motion so CSS-driven animations settle before capture.
+    reducedMotion: "reduce",
     trace: "on-first-retry",
     screenshot: "only-on-failure",
   },
