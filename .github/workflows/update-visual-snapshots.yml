@@ -6,6 +6,12 @@ name: Update Visual Snapshots
 on:
   workflow_dispatch:
 
+# The job commits the regenerated baselines back to the branch, so the
+# GITHUB_TOKEN needs write access to repo contents. The repo-wide default
+# stays read-only; this grants write only to this workflow.
+permissions:
+  contents: write
+
 env:
   MARKET_BASE_URL_BE: ${{ secrets.MARKET_BASE_URL_BE }}
   MARKET_BASE_URL_NL: ${{ secrets.MARKET_BASE_URL_NL }}
