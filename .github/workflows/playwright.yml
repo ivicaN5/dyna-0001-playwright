@@ -5,6 +5,10 @@ on:
     branches: [main, master]
   pull_request:
     branches: [main, master]
+  # Allow running the suite manually from the Actions tab — e.g. to validate
+  # against freshly committed visual baselines (a GITHUB_TOKEN push does not
+  # trigger the push event, so a manual run is needed in that case).
+  workflow_dispatch:
 
 env:
   MARKET_BASE_URL_BE: ${{ secrets.MARKET_BASE_URL_BE }}
