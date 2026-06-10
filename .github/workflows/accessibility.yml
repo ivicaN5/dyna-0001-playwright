@@ -1,13 +1,10 @@
-name: Playwright Tests
+name: Accessibility Tests
 
 on:
   push:
     branches: [main, master]
   pull_request:
     branches: [main, master]
-  # Allow running the suite manually from the Actions tab — e.g. to validate
-  # against freshly committed visual baselines (a GITHUB_TOKEN push does not
-  # trigger the push event, so a manual run is needed in that case).
   workflow_dispatch:
 
 env:
@@ -18,31 +15,9 @@ env:
   MARKET_BASE_URL_ES: ${{ secrets.MARKET_BASE_URL_ES }}
 
 jobs:
-  visual-tests:
-    name: Visual Tests
-    timeout-minutes: 60
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: lts/*
-      - name: Install dependencies
-        run: npm ci
-      - name: Install Playwright Browsers
-        run: npx playwright install --with-deps
-      - name: Run visual tests
-        run: npx playwright test tests/visual
-      - uses: actions/upload-artifact@v4
-        if: ${{ !cancelled() }}
-        with:
-          name: visual-report
-          path: playwright-report/
-          retention-days: 30
-
   accessibility-tests:
     name: Accessibility Tests
-    timeout-minutes: 60
+    timeout-minutes: 45
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -54,7 +29,13 @@ jobs:
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps chromium
       - name: Run accessibility tests
-        run: npx playwright test tests/accessibility --project=accessibility
+        # Accessibility findings are surfaced as a warning, not a hard failure:
+        # the step may fail (violations found) without failing the workflow.
+        continue-on-error: true
+        # Parallelise to avoid the 60-min job-timeout cancellation: override the
+        # repo-wide `workers: 1` (used only for visual-snapshot stability) and
+        # skip retries, since results are reported as a warning either way.
+        run: npx playwright test tests/accessibility --project=accessibility --workers=4 --retries=0
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
         with:

@@ -70,8 +70,9 @@ for (const slug of PAGES) {
     test.describe(`Accessibility - ${slug} - ${label}`, () => {
       // Shared navigation step reused in every test
       async function navigateTo({ page }: { page: import("@playwright/test").Page }) {
-        await page.goto(url, { waitUntil: "load" });
-        await page.waitForLoadState("domcontentloaded");
+        // Use "domcontentloaded" (not "load") so a slow third-party resource
+        // can't stall navigation; axe only needs the DOM, not every sub-resource.
+        await page.goto(url, { waitUntil: "domcontentloaded", timeout: 60000 });
 
         // Remove dev-toolbar iframe so it is excluded from accessibility checks
         await page.evaluate(() => {
