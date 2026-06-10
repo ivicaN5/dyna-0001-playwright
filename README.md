@@ -240,29 +240,66 @@ pages.
 
 ---
 
-## Running tests locally
+## Commands reference
 
-```bash
-# Visual
-npm run dev:run:visual           # run all visual tests
-npm run dev:open:visual          # visual tests in UI mode
-npm run dev:update:visual        # regenerate local (macOS) baselines
+### npm scripts
 
-# Accessibility
-npm run dev:run:accessibility    # run all accessibility tests
-npm run dev:open:accessibility   # accessibility tests in UI mode
+Run any of these with `npm run <name>` (they are defined in `package.json`).
 
-# (reserved) e2e / feature suites
-npm run dev:run:e2e
-npm run dev:run:features
-```
+| Command                          | Runs (under the hood)                                              | What it does                                                                         |
+| -------------------------------- | ------------------------------------------------------------------ | ------------------------------------------------------------------------------------ |
+| `npm run dev:run:visual`         | `playwright test tests/visual`                                     | Run the full visual regression suite (156 screenshots).                              |
+| `npm run dev:open:visual`        | `playwright test tests/visual --ui`                                | Open the visual suite in Playwright's interactive **UI mode** (watch, pick, replay). |
+| `npm run dev:update:visual`      | `playwright test tests/visual --update-snapshots`                  | Regenerate the local (macOS) baseline screenshots.                                   |
+| `npm run dev:run:accessibility`  | `playwright test tests/accessibility --project=accessibility`      | Run the accessibility suite (39 axe scans).                                          |
+| `npm run dev:open:accessibility` | `playwright test tests/accessibility --project=accessibility --ui` | Open the accessibility suite in UI mode.                                             |
+| `npm run dev:run:e2e`            | `playwright test tests/e2e`                                        | Run end-to-end tests _(reserved — folder is currently empty)_.                       |
+| `npm run dev:open:e2e`           | `playwright test tests/e2e --ui`                                   | E2E tests in UI mode _(reserved)_.                                                   |
+| `npm run dev:run:features`       | `playwright test tests/features`                                   | Run feature tests _(reserved — folder is currently empty)_.                          |
+| `npm run dev:open:features`      | `playwright test tests/features --ui`                              | Feature tests in UI mode _(reserved)_.                                               |
+| `npm run lint`                   | `eslint .`                                                         | Lint all TypeScript/JavaScript files.                                                |
+| `npm run format`                 | `prettier --write .`                                               | Auto-format the entire project.                                                      |
+| `npm run prepare`                | `husky`                                                            | Install the Git pre-commit hooks. Runs automatically after `npm install`.            |
 
-Other scripts: `npm run lint`, `npm run format`.
+### Useful raw Playwright commands
+
+Not npm scripts, but handy day-to-day:
+
+| Command                                                  | What it does                                                            |
+| -------------------------------------------------------- | ----------------------------------------------------------------------- |
+| `npx playwright test`                                    | Run **every** project and suite (visual + accessibility).               |
+| `npx playwright test tests/visual -g "logo-grid"`        | Run only tests whose title matches a pattern (`-g`).                    |
+| `npx playwright test --project=chromium-desktop-default` | Run a single browser/viewport project.                                  |
+| `npx playwright test tests/visual -u -g "faq"`           | Update baselines for matching tests only (`-u` = `--update-snapshots`). |
+| `npx playwright test --headed`                           | Run with a visible browser window.                                      |
+| `npx playwright test --debug`                            | Step through tests with the Playwright Inspector.                       |
+| `npx playwright show-report`                             | Open the HTML report from the last run.                                 |
+| `npx playwright install --with-deps`                     | (Re)install the browsers Playwright drives.                             |
+
+Project names follow `<browser>-<viewport>` for visual (e.g. `chromium-desktop-default`,
+`webkit-mobile-iphone`; browsers: `chromium`/`firefox`/`webkit`, viewports:
+`desktop-default`/`desktop-large`/`mobile-iphone`/`mobile-android`). The accessibility
+project is simply named `accessibility`.
+
+### Running workflows from the CLI
+
+Requires the [GitHub CLI](https://cli.github.com/) (`gh`), authenticated for this repo.
+
+| Command                                                  | What it does                                           |
+| -------------------------------------------------------- | ------------------------------------------------------ |
+| `gh workflow run visual.yml --ref main`                  | Manually trigger the **Visual Tests** workflow.        |
+| `gh workflow run accessibility.yml --ref main`           | Manually trigger the **Accessibility Tests** workflow. |
+| `gh workflow run update-visual-snapshots.yml --ref main` | Regenerate and commit the **Linux** baselines.         |
+| `gh run list`                                            | List recent workflow runs.                             |
+| `gh run watch <run-id>`                                  | Follow a run live until it finishes.                   |
 
 ### Updating snapshots
 
 ```bash
-# Specific page / project
+# All BE EN baselines (local macOS)
+npm run dev:update:visual
+
+# Specific page or project only
 npx playwright test tests/visual -u -g "automated-testing-faq-component-variations"
 npx playwright test tests/visual -u --project=chromium-desktop-default
 ```
