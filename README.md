@@ -16,7 +16,134 @@ environment.
 
 ---
 
+## Getting started (step-by-step for absolute beginners)
+
+> Never used the terminal, Node.js, or Playwright before? Follow these steps in
+> order. If you already have Node.js installed and the repo cloned, skip ahead to
+> [Project setup](#project-setup).
+
+A few terms first:
+
+- **Terminal** — the app where you type commands. On **macOS** it's _Terminal_
+  (Applications → Utilities). On **Windows** use _PowerShell_ or _Git Bash_
+  (installed with Git, below).
+- **Command** — a line you type into the terminal and run by pressing Enter.
+- **Repository ("repo")** — this project's folder of code, hosted on GitHub.
+
+### Step 1 — Install Node.js (this also installs `npm`)
+
+1. Go to <https://nodejs.org> and download the **LTS** version for your operating system.
+2. Run the installer and accept the default options.
+3. Open a **new** terminal window and check it worked:
+
+   ```bash
+   node --version
+   npm --version
+   ```
+
+   Each command should print a version number (e.g. `v20.x.x`). If you see
+   "command not found", close the terminal, open a new one, and try again.
+
+### Step 2 — Install Git
+
+Git is the tool used to download (clone) the project.
+
+- **macOS:** run `git --version`. If Git isn't installed, macOS will offer to
+  install it. Or download from <https://git-scm.com>.
+- **Windows:** install **Git for Windows** from <https://git-scm.com> — this also
+  gives you the _Git Bash_ terminal.
+- Verify with: `git --version`
+
+### Step 3 — Download the project
+
+In the terminal, go to the folder where you keep projects, then clone the repo
+and move into it:
+
+```bash
+git clone https://github.com/ivicaN5/dyna-0001-playwright.git
+cd dyna-0001-playwright
+```
+
+Every command from here on is run **inside** this `dyna-0001-playwright` folder.
+
+### Step 4 — Install the project's dependencies
+
+```bash
+npm ci
+```
+
+This reads `package-lock.json` and installs the exact library versions the
+project needs. (If `npm ci` errors, try `npm install` instead.) This also sets
+up the Git pre-commit hooks automatically.
+
+### Step 5 — Install the browsers Playwright controls
+
+```bash
+npx playwright install --with-deps
+```
+
+This downloads the Chromium, Firefox, and WebKit browsers that the tests drive.
+(`--with-deps` also installs required system libraries on Linux; it's harmless on
+macOS/Windows.)
+
+### Step 6 — Add the website URLs
+
+The tests need to know which website to test. Create a file named **`.env.local`**
+in the project root containing these lines (ask a teammate if the URLs differ):
+
+```bash
+MARKET_BASE_URL_BE=https://www.website-staging.dynapps.be
+MARKET_BASE_URL_NL=https://www.website-staging.dynapps.nl
+MARKET_BASE_URL_FR=https://www.website-staging.dynapps.fr
+MARKET_BASE_URL_CH=https://www.website-staging.dynapps.ch
+MARKET_BASE_URL_ES=https://www.website-staging.dynapps.es
+```
+
+On macOS/Linux you can start from the template: `cp .env .env.local`, then edit
+it. `.env.local` is private and is never committed to Git.
+
+### Step 7 — Run your first test
+
+Start with the accessibility suite — it's fast (~2 minutes) and needs no baseline
+images:
+
+```bash
+npm run dev:run:accessibility
+```
+
+Prefer to _watch_ the tests run? Open the visual suite in interactive UI mode:
+
+```bash
+npm run dev:open:visual
+```
+
+### Step 8 — View the results
+
+After a run, open the HTML report in your browser:
+
+```bash
+npx playwright show-report
+```
+
+You'll see every test, its status, screenshots, and (for accessibility) the
+detailed findings.
+
+### Common problems
+
+| You see…                                      | Fix                                                                                                                       |
+| --------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| `command not found: npm` (or `node`)          | Node.js isn't installed, or you need a fresh terminal. Reinstall from nodejs.org and open a new terminal window.          |
+| `Cannot navigate to invalid URL`              | `.env.local` is missing or a `MARKET_BASE_URL_*` value is empty. Re-check Step 6.                                         |
+| Browser download / launch errors              | Re-run `npx playwright install --with-deps`.                                                                              |
+| Visual test fails: "A snapshot doesn't exist" | You have no local baseline images yet. Create them with `npm run dev:update:visual` (see the snapshot note further down). |
+| The first run is slow                         | The first run downloads browsers and warms caches; later runs are much faster.                                            |
+
+---
+
 ## Project setup
+
+> Quick reference for those already comfortable with Node.js — the section above
+> walks through the same steps in more detail.
 
 ### Prerequisites
 
