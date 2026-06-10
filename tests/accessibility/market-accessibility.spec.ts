@@ -5,12 +5,17 @@ import { formatViolations, getScanSummary } from "./helpers";
 /**
  * Accessibility Tests for all Market visual testing pages.
  *
- * Tests against:
+ * Tests against WCAG 2.2 Level AA (cumulative A + AA up to 2.2):
  * - WCAG 2.0 Level A  (wcag2a)
  * - WCAG 2.0 Level AA (wcag2aa)
  * - WCAG 2.1 Level A  (wcag21a)
  * - WCAG 2.1 Level AA (wcag21aa)
+ * - WCAG 2.2 Level A  (wcag22a)
+ * - WCAG 2.2 Level AA (wcag22aa)  — adds e.g. target-size (2.5.8)
  * - EN-301-549 (European Accessibility Act)
+ *
+ * Note: target-size (2.5.8) is a touch-target rule and mainly surfaces on
+ * touch/mobile viewports; the accessibility project runs desktop-default.
  *
  * Documentation: https://playwright.dev/docs/accessibility-testing
  */
@@ -42,7 +47,7 @@ const PAGES = [
 const LOCALES = [{ base: BASE_BE, locale: "en", label: "BE EN" }];
 
 // Shared axe tags
-const AXE_TAGS = ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "EN-301-549"];
+const AXE_TAGS = ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22a", "wcag22aa", "EN-301-549"];
 
 // ---------------------------------------------------------------------------
 // Test matrix

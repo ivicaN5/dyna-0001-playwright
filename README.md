@@ -227,7 +227,8 @@ pages.
 ### Accessibility (`tests/accessibility`)
 
 - 13 pages × 3 scans (full page, WCAG, main-content) = **39 tests**, on Chromium.
-- Tags: `wcag2a`, `wcag2aa`, `wcag21a`, `wcag21aa`, `EN-301-549` (EAA).
+- Standard: **WCAG 2.2 Level AA** — tags `wcag2a`, `wcag2aa`, `wcag21a`,
+  `wcag21aa`, `wcag22a`, `wcag22aa`, plus `EN-301-549` (EAA).
 - Produces **no snapshots**; it asserts there are no violations and attaches a
   JSON report per scan.
 
