@@ -28,16 +28,30 @@ const visualProjects: Project[] = BROWSERS.flatMap((browser) =>
   }))
 );
 
-// Accessibility tests run on a single browser + desktop viewport —
-// a11y violations are not viewport- or browser-specific.
-const accessibilityProject: Project = {
-  name: "accessibility",
-  testMatch: "**/accessibility/**/*.spec.ts",
-  use: {
-    browserName: "chromium",
-    viewport: VIEWPORTS.desktopDefault,
+// Accessibility tests run on Chromium. Most a11y rules are viewport-agnostic,
+// so a desktop project covers them. A second mobile/touch project is added so
+// touch-specific WCAG 2.2 rules (notably target-size, SC 2.5.8) are actually
+// exercised — those only apply in a touch context.
+const accessibilityProjects: Project[] = [
+  {
+    name: "accessibility",
+    testMatch: "**/accessibility/**/*.spec.ts",
+    use: {
+      browserName: "chromium",
+      viewport: VIEWPORTS.desktopDefault,
+    },
   },
-};
+  {
+    name: "accessibility-mobile",
+    testMatch: "**/accessibility/**/*.spec.ts",
+    use: {
+      browserName: "chromium",
+      viewport: VIEWPORTS.mobileIphone,
+      isMobile: true,
+      hasTouch: true,
+    },
+  },
+];
 
 export default defineConfig({
   testDir: "./tests",
@@ -67,5 +81,5 @@ export default defineConfig({
     trace: "on-first-retry",
     screenshot: "only-on-failure",
   },
-  projects: [...visualProjects, accessibilityProject],
+  projects: [...visualProjects, ...accessibilityProjects],
 });

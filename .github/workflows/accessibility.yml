@@ -35,7 +35,7 @@ jobs:
         # Parallelise to avoid the 60-min job-timeout cancellation: override the
         # repo-wide `workers: 1` (used only for visual-snapshot stability) and
         # skip retries, since results are reported as a warning either way.
-        run: npx playwright test tests/accessibility --project=accessibility --workers=4 --retries=0
+        run: npx playwright test tests/accessibility --project=accessibility --project=accessibility-mobile --workers=4 --retries=0
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
         with:
