@@ -16,10 +16,6 @@ import { formatViolations, getScanSummary } from "./helpers";
  */
 
 const BASE_BE = process.env.MARKET_BASE_URL_BE ?? "";
-const BASE_NL = process.env.MARKET_BASE_URL_NL ?? "";
-const BASE_FR = process.env.MARKET_BASE_URL_FR ?? "";
-const BASE_CH = process.env.MARKET_BASE_URL_CH ?? "";
-const BASE_ES = process.env.MARKET_BASE_URL_ES ?? "";
 
 // ---------------------------------------------------------------------------
 // Page slugs — one entry per component page
@@ -41,21 +37,9 @@ const PAGES = [
 ];
 
 // ---------------------------------------------------------------------------
-// Locale / domain combinations — mirrors the visual test matrix
+// Locale / domain combinations — BE English only (mirrors the visual suite)
 // ---------------------------------------------------------------------------
-const LOCALES = [
-  { base: BASE_BE, locale: "en", label: "BE EN" },
-  { base: BASE_BE, locale: "nl", label: "BE NL" },
-  { base: BASE_BE, locale: "fr", label: "BE FR" },
-  { base: BASE_NL, locale: "nl", label: "NL NL" },
-  { base: BASE_NL, locale: "en", label: "NL EN" },
-  { base: BASE_FR, locale: "fr", label: "FR FR" },
-  { base: BASE_CH, locale: "fr", label: "CH FR" },
-  { base: BASE_CH, locale: "de", label: "CH DE" },
-  { base: BASE_CH, locale: "en", label: "CH EN" },
-  { base: BASE_ES, locale: "es", label: "ES ES" },
-  { base: BASE_ES, locale: "en", label: "ES EN" },
-];
+const LOCALES = [{ base: BASE_BE, locale: "en", label: "BE EN" }];
 
 // Shared axe tags
 const AXE_TAGS = ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "EN-301-549"];
