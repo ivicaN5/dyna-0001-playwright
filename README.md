@@ -226,7 +226,10 @@ pages.
 
 ### Accessibility (`tests/accessibility`)
 
-- 13 pages × 3 scans (full page, WCAG, main-content) = **39 tests**, on Chromium.
+- 13 pages × 3 scans (full page, WCAG, main-content) × 2 projects = **78 tests**, on Chromium.
+- Projects: `accessibility` (desktop, 1366×768) and `accessibility-mobile`
+  (390×844, `isMobile` + `hasTouch`). The mobile/touch project exists so
+  touch-only WCAG 2.2 rules like `target-size` (SC 2.5.8) are actually exercised.
 - Standard: **WCAG 2.2 Level AA** — tags `wcag2a`, `wcag2aa`, `wcag21a`,
   `wcag21aa`, `wcag22a`, `wcag22aa`, plus `EN-301-549` (EAA).
 - Produces **no snapshots**; it asserts there are no violations and attaches a

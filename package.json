@@ -11,8 +11,8 @@
     "dev:run:visual": "npx playwright test tests/visual",
     "dev:open:visual": "npx playwright test tests/visual --ui",
     "dev:update:visual": "npx playwright test tests/visual --update-snapshots",
-    "dev:run:accessibility": "npx playwright test tests/accessibility --project=accessibility",
-    "dev:open:accessibility": "npx playwright test tests/accessibility --project=accessibility --ui",
+    "dev:run:accessibility": "npx playwright test tests/accessibility --project=accessibility --project=accessibility-mobile",
+    "dev:open:accessibility": "npx playwright test tests/accessibility --project=accessibility --project=accessibility-mobile --ui",
     "lint": "eslint .",
     "format": "prettier --write .",
     "prepare": "husky"
