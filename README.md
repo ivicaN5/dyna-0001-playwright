@@ -360,9 +360,91 @@ gh workflow run accessibility.yml --ref main
 
 ---
 
-## CI setup checklist (for a fresh repo)
+## Setting up GitHub Actions (CI)
 
-1. Add the five `MARKET_BASE_URL_*` secrets under
-   **Settings → Secrets and variables → Actions**.
-2. Run **Update Visual Snapshots** to generate and commit the Linux baselines.
-3. Run **Visual Tests** / **Accessibility Tests** (push, PR, or manual dispatch).
+These steps configure CI from scratch (e.g. on a fresh fork). They require
+**admin** access to the repository settings.
+
+### 1. Enable Actions
+
+Actions are on by default. To confirm, go to
+**Settings → Actions → General → Actions permissions** and select
+_"Allow all actions and reusable workflows"_. The workflow files in
+`.github/workflows/` are detected automatically.
+
+### 2. Add the staging-URL secrets
+
+The workflows read the website URLs from repository **secrets** (so they are
+never committed). Add all five.
+
+**Via the GitHub UI** — _Settings → Secrets and variables → Actions → New repository secret_:
+
+| Secret name          | Value                                    |
+| -------------------- | ---------------------------------------- |
+| `MARKET_BASE_URL_BE` | `https://www.website-staging.dynapps.be` |
+| `MARKET_BASE_URL_NL` | `https://www.website-staging.dynapps.nl` |
+| `MARKET_BASE_URL_FR` | `https://www.website-staging.dynapps.fr` |
+| `MARKET_BASE_URL_CH` | `https://www.website-staging.dynapps.ch` |
+| `MARKET_BASE_URL_ES` | `https://www.website-staging.dynapps.es` |
+
+**Or via the `gh` CLI** (reads the values straight from your local `.env.local`):
+
+```bash
+while IFS='=' read -r key val; do
+  [ -n "$key" ] && gh secret set "$key" --body "$val"
+done < .env.local
+
+gh secret list   # verify all five are present
+```
+
+> If a secret is missing, CI navigation fails with
+> `Cannot navigate to invalid URL` (the base URL resolves to an empty string).
+
+### 3. Generate the initial Linux baselines
+
+The visual suite compares against **Linux** screenshots (`*-linux.png`), which
+don't exist on a fresh repo. Generate them on a Linux runner:
+
+```bash
+gh workflow run update-visual-snapshots.yml --ref main
+```
+
+The workflow renders every baseline and commits them back to the branch. It
+declares `permissions: contents: write` so the built-in `GITHUB_TOKEN` can push.
+
+> **If the commit step fails with a 403:** the token is read-only. This repo
+> grants write per-workflow via `permissions: contents: write`. If your org
+> enforces read-only globally, also set
+> **Settings → Actions → General → Workflow permissions → "Read and write permissions"**.
+
+### 4. Run the test workflows
+
+The baseline commit in step 3 is made with `GITHUB_TOKEN`, and GitHub does
+**not** auto-trigger other workflows from such a push. So start the suites
+manually the first time:
+
+```bash
+gh workflow run visual.yml --ref main
+gh workflow run accessibility.yml --ref main
+```
+
+After that, they run automatically on every push and pull request to
+`main`/`master` (and remain manually dispatchable).
+
+### 5. Monitor runs
+
+```bash
+gh run list                          # recent runs across all workflows
+gh run watch <run-id>                # follow a run live
+gh run view <run-id> --log-failed    # show only the failing step output
+```
+
+Or use the **Actions** tab in the GitHub UI — each run uploads its HTML report
+as a downloadable artifact (`visual-report` / `accessibility-report`).
+
+### When to regenerate baselines
+
+Re-run **Update Visual Snapshots** whenever rendering legitimately changes —
+pages added/removed, intentional UI changes, or config changes that affect
+rendering (viewports, animation/motion settings) — then re-run **Visual Tests**
+to confirm the suite is green.
