@@ -15,7 +15,27 @@ export class MarketPage {
 
   async goto() {
     await this.page.goto(this.url, { waitUntil: "domcontentloaded", timeout: 60000 });
+    await this.dismissCookieConsent();
+    await this.removeAvoDebugger();
     await this.scrollToBottomAndWaitForImages();
+  }
+
+  async dismissCookieConsent() {
+    const acceptButton = this.page.locator(
+      "#CybotCookiebotDialogBodyLevelButtonLevelOptinAllowAll"
+    );
+    await acceptButton.waitFor({ state: "visible", timeout: 5000 }).catch(() => {});
+    if (await acceptButton.isVisible()) {
+      await acceptButton.click();
+      await acceptButton.waitFor({ state: "hidden", timeout: 5000 }).catch(() => {});
+    }
+  }
+
+  async removeAvoDebugger() {
+    await this.page.evaluate(() => {
+      const toolbar = document.getElementById("avo-debugger");
+      if (toolbar) toolbar.remove();
+    });
   }
 
   /**
