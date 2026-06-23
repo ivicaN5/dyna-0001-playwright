@@ -16,8 +16,8 @@ export class MarketPage {
   async goto() {
     await this.page.goto(this.url, { waitUntil: "domcontentloaded", timeout: 60000 });
     await this.dismissCookieConsent();
-    await this.removeAvoDebugger();
     await this.scrollToBottomAndWaitForImages();
+    await this.removeAvoDebugger();
   }
 
   async dismissCookieConsent() {
@@ -32,10 +32,9 @@ export class MarketPage {
   }
 
   async removeAvoDebugger() {
-    await this.page.evaluate(() => {
-      const toolbar = document.getElementById("avo-debugger");
-      if (toolbar) toolbar.remove();
-    });
+    const iframe = this.page.locator("iframe#avo-debugger");
+    await iframe.waitFor({ state: "attached", timeout: 5000 }).catch(() => {});
+    await this.page.evaluate(() => document.getElementById("avo-debugger")?.remove());
   }
 
   /**

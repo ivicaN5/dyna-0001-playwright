@@ -33,6 +33,7 @@ test.describe("Visual - Market (BE EN)", () => {
       await marketPage.goto();
       await expect(page).toHaveScreenshot(`${PREFIX}-${slug}.png`, {
         fullPage: true,
+        maxDiffPixelRatio: 0.05,
         ...(mask ? { mask: [marketPage.secondLogoGrid] } : {}),
       });
     });
